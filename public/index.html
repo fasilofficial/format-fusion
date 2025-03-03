@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FormatFusion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-css.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body
+    class="min-h-screen bg-slate-50 text-slate-900 antialiased flex flex-col"
+  >
+    <main class="container mx-auto px-4 py-8 max-w-4xl flex-grow">
+      <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+          FormatFusion
+        </h1>
+        <div class="text-sm text-slate-500">Format Converter</div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+          <div class="p-1 bg-slate-100 border-b rounded-t-lg flex items-center">
+            <div class="text-sm font-medium px-3 py-2">Input</div>
+            <div class="ml-auto flex gap-2">
+              <button
+                onclick="beautifyCode('input', 'auto')"
+                class="px-2 py-1 text-xs bg-white border border-slate-200 rounded flex items-center gap-1 hover:bg-slate-50"
+                title="Auto-format"
+              >
+                <i class="fas fa-magic text-slate-500"></i>
+                <span>Beautify</span>
+              </button>
+              <button
+                onclick="copyToClipboard('input')"
+                class="px-2 py-1 text-xs bg-white border border-slate-200 rounded flex items-center gap-1 hover:bg-slate-50"
+                title="Copy to clipboard"
+              >
+                <i class="fas fa-copy text-slate-500"></i>
+                <span>Copy</span>
+              </button>
+              <button
+                onclick="clearTextarea('input')"
+                class="px-2 py-1 text-xs bg-white border border-slate-200 rounded flex items-center gap-1 hover:bg-slate-50"
+                title="Clear input"
+              >
+                <i class="fas fa-trash text-slate-500"></i>
+                <span>Clear</span>
+              </button>
+            </div>
+          </div>
+          <textarea
+            id="input"
+            class="w-full h-64 p-4 text-sm bg-white rounded-b-lg focus:outline-none resize-y font-mono"
+            placeholder="Enter your data here..."
+          ></textarea>
+        </div>
+
+        <div class="flex flex-wrap gap-3 items-center">
+          <div class="flex flex-wrap gap-2">
+            <button
+              onclick="convert('xml-to-json')"
+              class="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors"
+            >
+              XML to JSON
+            </button>
+            <button
+              onclick="convert('json-to-yaml')"
+              class="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors"
+            >
+              JSON to YAML
+            </button>
+            <button
+              onclick="convert('json-to-xml')"
+              class="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors"
+            >
+              JSON to XML
+            </button>
+          </div>
+
+          <div class="flex gap-2 ml-auto">
+            <select
+              id="format-options"
+              class="px-3 py-2 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
+            >
+              <option value="2">2 Spaces</option>
+              <option value="4">4 Spaces</option>
+              <option value="tab">Tabs</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+          <div class="p-1 bg-slate-100 border-b rounded-t-lg flex items-center">
+            <div class="text-sm font-medium px-3 py-2">Output</div>
+            <div class="ml-auto flex gap-2">
+              <button
+                onclick="beautifyCode('output', 'auto')"
+                class="px-2 py-1 text-xs bg-white border border-slate-200 rounded flex items-center gap-1 hover:bg-slate-50"
+                title="Auto-format"
+              >
+                <i class="fas fa-magic text-slate-500"></i>
+                <span>Beautify</span>
+              </button>
+              <button
+                onclick="copyToClipboard('output')"
+                class="px-2 py-1 text-xs bg-white border border-slate-200 rounded flex items-center gap-1 hover:bg-slate-50"
+                title="Copy to clipboard"
+              >
+                <i class="fas fa-copy text-slate-500"></i>
+                <span>Copy</span>
+              </button>
+              <button
+                onclick="clearTextarea('output')"
+                class="px-2 py-1 text-xs bg-white border border-slate-200 rounded flex items-center gap-1 hover:bg-slate-50"
+                title="Clear output"
+              >
+                <i class="fas fa-trash text-slate-500"></i>
+                <span>Clear</span>
+              </button>
+            </div>
+          </div>
+          <textarea
+            id="output"
+            class="w-full h-64 p-4 text-sm bg-white rounded-b-lg focus:outline-none resize-y font-mono"
+            placeholder="Result will appear here..."
+            readonly
+          ></textarea>
+        </div>
+      </div>
+    </main>
+
+    <footer class="border-t border-slate-200 mt-8">
+      <div
+        class="container mx-auto px-4 py-6 flex justify-between items-center"
+      >
+        <div class="text-sm text-slate-500">&copy; 2025 FormatFusion</div>
+        <a
+          href="https://github.com/fasilofficial"
+          target="_blank"
+          class="text-sm text-slate-600 hover:text-slate-900 flex items-center gap-2"
+        >
+          <i class="fab fa-github"></i>
+          <span>fasilofficial</span>
+        </a>
+      </div>
+    </footer>
+
+    <div
+      id="toast"
+      class="fixed bottom-4 right-4 bg-slate-800 text-white px-4 py-2 rounded-md shadow-lg transform translate-y-full opacity-0 transition-all duration-300 z-50"
+    >
+      Copied to clipboard!
+    </div>
+
+    <script>
+      async function convert(type) {
+        const input = document.getElementById("input").value;
+        const format = document.getElementById("format-options").value;
+        const outputField = document.getElementById("output");
+
+        outputField.value = "Converting...";
+
+        try {
+          const response = await fetch(`/api/convert/${type}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              data: input,
+              options: { spaces: format === "tab" ? "\t" : Number(format) },
+            }),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+              JSON.parse(errorText).message || "Conversion failed"
+            );
+          }
+
+          const contentType = response.headers.get("Content-Type");
+          let result;
+          if (contentType && contentType.includes("json")) {
+            result = JSON.stringify(await response.json(), null, 2);
+          } else {
+            result = await response.text();
+          }
+          outputField.value = result;
+
+          // Auto-beautify the result
+          const formatType = type.split("-to-")[1];
+          beautifyCode("output", formatType);
+        } catch (error) {
+          outputField.value = `Error: ${error.message}`;
+        }
+      }
+
+      function detectFormat(text) {
+        // Attempt to detect the format of the input
+        text = text.trim();
+
+        if (text.startsWith("<") && text.endsWith(">")) {
+          return "html"; // XML/HTML
+        } else if (
+          (text.startsWith("{") && text.endsWith("}")) ||
+          (text.startsWith("[") && text.endsWith("]"))
+        ) {
+          return "json";
+        } else if (
+          text.includes(":") &&
+          !text.includes("{") &&
+          !text.includes("[")
+        ) {
+          return "yaml";
+        }
+
+        return "text";
+      }
+
+      function beautifyCode(elementId, format) {
+        const element = document.getElementById(elementId);
+        const text = element.value.trim();
+
+        if (!text) return;
+
+        let beautified;
+        format = format === "auto" ? detectFormat(text) : format;
+
+        try {
+          switch (format) {
+            case "json":
+              // Parse and stringify to ensure valid JSON
+              beautified = JSON.stringify(
+                JSON.parse(text),
+                null,
+                document.getElementById("format-options").value === "tab"
+                  ? "\t"
+                  : Number(document.getElementById("format-options").value)
+              );
+              break;
+            case "html":
+            case "xml":
+              beautified = html_beautify(text, {
+                indent_size:
+                  document.getElementById("format-options").value === "tab"
+                    ? 1
+                    : Number(document.getElementById("format-options").value),
+                indent_char:
+                  document.getElementById("format-options").value === "tab"
+                    ? "\t"
+                    : " ",
+              });
+              break;
+            case "yaml":
+              // Simple indentation for YAML
+              beautified = text; // YAML is already pretty-formatted usually
+              break;
+            default:
+              beautified = text;
+          }
+          element.value = beautified;
+        } catch (error) {
+          console.error("Beautification error:", error);
+          // Don't change the value if there's an error
+        }
+      }
+
+      function copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        element.select();
+        document.execCommand("copy");
+
+        // Show toast notification
+        const toast = document.getElementById("toast");
+        toast.style.transform = "translateY(0)";
+        toast.style.opacity = "1";
+
+        setTimeout(() => {
+          toast.style.transform = "translateY(full)";
+          toast.style.opacity = "0";
+        }, 3000);
+      }
+
+      function clearTextarea(elementId) {
+        document.getElementById(elementId).value = "";
+      }
+    </script>
+  </body>
+</html>

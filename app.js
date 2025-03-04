@@ -20,6 +20,10 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+app.get("/test", (req, res) => {
+  res.send("Hello, World!");
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error("Server error:", err.stack);
